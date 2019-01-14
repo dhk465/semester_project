@@ -53,11 +53,11 @@ male_stat = aasd[aasd['sex'] == 'M']
 female_stat = aasd[aasd['sex'] == 'F']
 
 # hist_age
-histo01 = [go.Histogram(x=aasd['age at diagnosis'], name = 'patient count')]
+histo01 = [go.Histogram(x=aasd['age at diagnosis'], name = 'patient count', opacity = 0.75)]
 layout01 = go.Layout(
     showlegend = False,
-    height = 600,
-    width = 750,
+    height = 700,
+    autosize = True,
     title = 'Age Distribution',
     xaxis = {'title': 'Age at Diagnosis'},
     yaxis = {'title': 'Number of Patients'}
@@ -72,8 +72,8 @@ pie01 = go.Pie(
 )
 layout02 = go.Layout(
     showlegend = True,
-    height = 600,
-    width = 750,
+    height = 700,
+    autosize = True,
     title = 'Number of Patients in Australian States'
 )
 fig02 = dict(data = [pie01], layout = layout02)
@@ -101,32 +101,32 @@ pie06 = go.Pie(
 
 layout05 = go.Layout(
     showlegend = True,
-    height = 600,
-    width = 750,
+    height = 700,
+    autosize = True,
     title = 'Modes of Transmission in Australia'
 )
 layout06 = go.Layout(
     showlegend = True,
-    height = 600,
-    width = 750,
+    height = 700,
+    autosize = True,
     title = 'Modes of Transmission in New South Wales'
 )
 layout07 = go.Layout(
     showlegend = True,
-    height = 600,
-    width = 750,
+    height = 700,
+    autosize = True,
     title = 'Modes of Transmission Victoria'
 )
 layout08 = go.Layout(
     showlegend = True,
-    height = 600,
-    width = 750,
+    height = 700,
+    autosize = True,
     title = 'Modes of Transmission in Queensland'
 )
 layout09 = go.Layout(
     showlegend = True,
-    height = 600,
-    width = 750,
+    height = 700,
+    autosize = True,
     title = 'Modes of Transmission in other states'
 )
 fig05 = dict(data = [pie02], layout = layout05)
@@ -143,8 +143,8 @@ scatter01 = go.Scatter(
 )
 layout03 = go.Layout(
     showlegend = False,
-    height = 600,
-    width = 750,
+    height = 700,
+    autosize = True,
     title = 'days patients lived by age group',
     xaxis = {'title': 'Age at Diagnosis'},
     yaxis = {'title': 'Days lived'}
@@ -165,9 +165,11 @@ female_histo = go.Histogram(
 layout04 = go.Layout(
     barmode = 'stack',
     showlegend = True,
-    height = 600,
-    width = 750,
-    title = 'Age Distribution between Men and Women'
+    height = 700,
+    autosize = True,
+    title = 'Age Distribution between Men and Women',
+    xaxis = {'title': 'Age at Diagnosis'},
+    yaxis = {'title': 'Number of Patients'}
 )
 fig04 = dict(data = [male_histo, female_histo], layout = layout04)
 
@@ -182,17 +184,29 @@ def generate_table(dataframe, max_rows=100):
         ]) for i in range(min(len(dataframe), max_rows))]
     )
 
-# https://codepen.io/chriddyp/pen/bWLwgP.css as used on https://dash.plot.ly/getting-started
-external_stylesheets = ['./bWLwgP.css']
-
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+################################HTML############################################
+app = dash.Dash(__name__)
+app.css.config.serve_locally=True
 
 app.layout = html.Div(children=[
+# https://codepen.io/chriddyp/pen/bWLwgP.css as used on https://dash.plot.ly/getting-started
+    html.Link(
+        href='bWLwgP.css',
+        rel='stylesheet'
+    ),
     html.H1(
         children='Python Semester Project'
     ),
-    html.Div(children='''
-        AIDS statistics in Australia up to 1992\n
+    dcc.Markdown('''
+### AIDS statistics in Australia up to 1992
+
+The data and the graphs used in this project illustrates AIDS/HIV cases of Australia
+from its rise till July 1991.
+
+The research was carried out by *P. J. Solomon* in order to **emphasise the importance of
+healthcare** and to give **an insight on the epidemic**.
+
+For further information, it is recommended to take a look at the [report](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=8&cad=rja&uact=8&ved=2ahUKEwicwff0pujfAhVHJ1AKHbEYBJ0QFjAHegQIBxAC&url=https%3A%2F%2Fpdfs.semanticscholar.org%2F7d23%2F36da875505e66ae983a271ee6cd83ce42677.pdf&usg=AOvVaw2j7D0Cij-lVA6_Mzr8brci) on the statistics.
     '''),
     dcc.RadioItems(
     id='type',
@@ -224,11 +238,11 @@ app.layout = html.Div(children=[
                 {'label': 'Modes of Transmission in New South Wales', 'value': 'nsw'},
                 {'label': 'Modes of Transmission in Victoria', 'value': 'vic'},
                 {'label': 'Modes of Transmission in Queensland', 'value': 'qld'},
-                {'label': 'Modes of Transmission in New South Wales', 'value': 'other'},
+                {'label': 'Modes of Transmission in other states', 'value': 'other'},
             ],
             value='aus'
         ),
-        dcc.Graph(id='inner_graph')
+        dcc.Graph(id='inner_graph', style = {'height': '700'})
     ]),
     html.Div(id='raw_statistics', children=generate_table(aasd))
 ])
